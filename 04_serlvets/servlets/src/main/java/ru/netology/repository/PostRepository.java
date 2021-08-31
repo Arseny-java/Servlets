@@ -4,38 +4,36 @@ import ru.netology.exception.NotFoundException;
 import ru.netology.model.Post;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 // Stub
 public class PostRepository {
     Scanner scanner = new Scanner(System.in);
-    private final List<Post> listOfAllPosts;
-    private long generateId;
+    private final Map<Long, Post> listOfAllPosts;
+    private final AtomicLong generateId;
+
 
     public PostRepository() {
-        this.listOfAllPosts = new Vector<>();
-        generateId = 0;
+        this.listOfAllPosts = new ConcurrentHashMap<>();
+        generateId = new AtomicLong(0);
     }
 
-    public List<Post> all() {
+    public Map<Long, Post> all() {
         return listOfAllPosts;
     }
 
 
     public Optional<Post> getById(long id) {
-        for (Post post : listOfAllPosts) {
-            if (id == post.getId()) {
-                return Optional.of(post);
-            }
-        }
-        return Optional.empty();
+        return Optional.ofNullable(listOfAllPosts.get(id));
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public Post save(Post post) {
         long inboundPostId = post.getId();
         if (inboundPostId == 0) {
-            post.setId(generateId++);
-            listOfAllPosts.add(post);
+            inboundPostId = generateId.incrementAndGet();
+            listOfAllPosts.put(inboundPostId, post);
             return post;
         } else {
             System.out.println("Данный пост уже существует. Обновить? Да/Нет");
@@ -45,8 +43,8 @@ public class PostRepository {
                 Post refreshPost = newPost.get();
                 refreshPost.setContent(post.getContent());
                 removeById(inboundPostId);
-                refreshPost.setId(generateId++);
-                listOfAllPosts.add(refreshPost);
+                refreshPost.setId(generateId.incrementAndGet());
+                listOfAllPosts.put(generateId.incrementAndGet(),refreshPost);
                 return refreshPost;
             } else throw new NotFoundException("Ок, хорошего вам дня!");
         }
@@ -54,6 +52,6 @@ public class PostRepository {
 
 
     public void removeById(long id) {
-        listOfAllPosts.removeIf(post -> id == post.getId());
+        listOfAllPosts.remove(id);
     }
 }
