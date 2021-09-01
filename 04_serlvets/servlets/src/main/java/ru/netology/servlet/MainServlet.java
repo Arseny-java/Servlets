@@ -22,31 +22,6 @@ public class MainServlet extends HttpServlet {
     controller = new PostController(service);
   }
 
-  protected void service(HttpServletRequest req, HttpServletResponse resp) {
-    try {
-      final var method = req.getMethod();
-      if (method.equals("GET")) {
-        doGet(req, resp);
-        return;
-      }
-      if (method.equals("POST")) {
-        doPost(req, resp);
-        return;
-      }
-      if (method.equals("DELETE")) {
-
-        doDelete(req, resp);
-        return;
-      }
-      resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-
-      resp.getWriter().printf("method '%s' or path '%s' not found", method, req.getRequestURI());
-    } catch (Exception e) {
-      e.printStackTrace();
-      resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    }
-  }
-
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     final var path = req.getRequestURI();
