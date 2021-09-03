@@ -1,14 +1,16 @@
 package ru.netology.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.netology.exception.NotFoundException;
 import ru.netology.model.Post;
 import ru.netology.repository.PostRepository;
 
 import java.util.Map;
-
+@Component
 public class PostService {
     private final PostRepository repository;
-
+    @Autowired
     public PostService(PostRepository repository) {
         this.repository = repository;
     }
