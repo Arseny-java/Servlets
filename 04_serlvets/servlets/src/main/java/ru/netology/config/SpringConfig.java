@@ -10,16 +10,18 @@ import ru.netology.service.PostService;
 public class SpringConfig {
 
     @Bean
-    public PostRepository postRepository (){
+    public PostController postController(PostService service) {
+        return new PostController(service);
+    }
+
+    @Bean
+    public PostService postService(PostRepository repository) {
+        return new PostService(repository);
+    }
+
+    @Bean
+    public PostRepository postRepository() {
         return new PostRepository();
-    }
-    @Bean
-    public PostService postService (){
-        return new PostService(postRepository());
-    }
-    @Bean
-    public PostController postController (){
-        return new PostController(postService());
     }
 
 
